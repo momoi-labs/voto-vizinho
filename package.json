@@ -10,12 +10,15 @@
   "dependencies": {
     "@momoi-labs/kiso-react": "0.14.0",
     "@tanstack/react-router": "1.170.41",
+    "leaflet": "^1.9.4",
     "lucide-react": "1.53.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "24.19.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
@@ -36,6 +39,7 @@
     "typecheck": "tsc -b",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "data:build": "python3 scripts/gerar_locais_por_uf.py"
   }
 }
