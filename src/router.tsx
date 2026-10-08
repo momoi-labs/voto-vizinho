@@ -1,69 +1,30 @@
-import {
-  createRootRoute,
-  createRoute,
-  createRouter,
-  Link as RouterLink,
-  Outlet,
-} from '@tanstack/react-router';
-import {
-  Link,
-  PageHeader,
-  PageHeaderDescription,
-  PageHeaderTitle,
-} from '@momoi-labs/kiso-react';
+import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
+import { WelcomePage } from './features/welcome/WelcomePage';
+import { MapaPage } from './features/mapa/MapaPage';
+import { parseMapaSearch } from './lib/mapa-search';
 
 const rootRoute = createRootRoute({
   component: () => (
-    <main className="page" aria-live="polite">
+    <main aria-live="polite">
       <Outlet />
     </main>
-  ),
-  notFoundComponent: () => (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Página não encontrada</PageHeaderTitle>
-      </PageHeader>
-      <Link asChild>
-        <RouterLink to="/">Voltar ao início</RouterLink>
-      </Link>
-    </>
   ),
 });
 
 const welcomeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
-  component: () => (
-    <>
-      <PageHeader variant="editorial">
-        <PageHeaderTitle>Voto Vizinho</PageHeaderTitle>
-        <PageHeaderDescription>
-          Mobilização local a partir de dados eleitorais.
-        </PageHeaderDescription>
-      </PageHeader>
-      <Link asChild>
-        <RouterLink to="/mapa">Abrir área de trabalho</RouterLink>
-      </Link>
-    </>
-  ),
+  component: WelcomePage,
 });
 
 const mapRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/mapa',
-  component: () => (
-    <>
-      <PageHeader>
-        <PageHeaderTitle>Resumo da área</PageHeaderTitle>
-        <PageHeaderDescription>
-          O mapa e os dados eleitorais ainda não foram integrados.
-        </PageHeaderDescription>
-      </PageHeader>
-      <Link asChild>
-        <RouterLink to="/">Voltar ao início</RouterLink>
-      </Link>
-    </>
-  ),
+  validateSearch: (search: Record<string, unknown>) => parseMapaSearch(search),
+  component: function MapaRoute() {
+    const search = mapRoute.useSearch();
+    return <MapaPage {...search} />;
+  },
 });
 
 export const router = createRouter({
