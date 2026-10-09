@@ -34,8 +34,7 @@ export const UI = {
     'Encontre os locais de vota\u00e7\u00e3o perto de voc\u00ea e veja onde cada conversa pode virar o resultado.',
   dadosTse:
     'Dados abertos do TSE \u00b7 1\u00ba turno 2026 \u00b7 Presidente \u00b7 todo o Brasil.',
-  fraseVirar: (n: string) =>
-    `VIRANDO ${n} VOTOS, LULA VENCE NESTA \u00c1REA`,
+  fraseVirar: (n: string) => `VIRANDO ${n} VOTOS, LULA VENCE NESTA \u00c1REA`,
   fraseLulaVence: (n: string) => `LULA VENCE NESTA \u00c1REA POR ${n} VOTOS`,
   locaisOrdenados: (n: number) =>
     `${n} locais \u00b7 ordenados por votos a virar`,
@@ -50,8 +49,7 @@ export const UI = {
   soConquistarNaoBasta: 'S\u00f3 conquistar n\u00e3o basta',
   reservaConquistar: (reserva: string, conquistar: string) =>
     `Aqui h\u00e1 ${reserva} votos para conquistar e seriam precisos ${conquistar}.`,
-  diferencaAptos: (pct: string) =>
-    `Diferen\u00e7a: ${pct} dos eleitores aptos`,
+  diferencaAptos: (pct: string) => `Diferen\u00e7a: ${pct} dos eleitores aptos`,
   tseTurno: 'TSE \u00b7 1\u00ba turno 2026',
   tooltipVotos: (flavio: string, lula: string) =>
     `Fl\u00e1vio Bolsonaro ${flavio} \u00b7 Lula ${lula}`,

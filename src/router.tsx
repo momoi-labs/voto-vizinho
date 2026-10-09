@@ -1,4 +1,9 @@
-import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  Outlet,
+} from '@tanstack/react-router';
 import { WelcomePage } from './features/welcome/WelcomePage';
 import { MapaPage } from './features/mapa/MapaPage';
 import { parseMapaSearch } from './lib/mapa-search';

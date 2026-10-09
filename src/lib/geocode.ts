@@ -25,12 +25,19 @@ type BrasilApiCep = {
 };
 
 function rotuloViaCep(info: ViaCepResponse) {
-  return [info.cep, info.logradouro, info.bairro, `${info.localidade}/${info.uf}`]
+  return [
+    info.cep,
+    info.logradouro,
+    info.bairro,
+    `${info.localidade}/${info.uf}`,
+  ]
     .filter(Boolean)
     .join(` ${UI.sep} `);
 }
 
-async function buscarEnderecoViaCep(cepDigits: string): Promise<ViaCepResponse> {
+async function buscarEnderecoViaCep(
+  cepDigits: string,
+): Promise<ViaCepResponse> {
   const res = await fetch(`https://viacep.com.br/ws/${cepDigits}/json/`);
   if (!res.ok) throw new Error(UI.cepConsultaFalha);
   const info = (await res.json()) as ViaCepResponse;
@@ -38,7 +45,9 @@ async function buscarEnderecoViaCep(cepDigits: string): Promise<ViaCepResponse> 
   return info;
 }
 
-async function coordenadasPorCep(cepDigits: string): Promise<LatLngTuple | null> {
+async function coordenadasPorCep(
+  cepDigits: string,
+): Promise<LatLngTuple | null> {
   const brasil = await fetch(
     `https://brasilapi.com.br/api/cep/v2/${cepDigits}`,
   );
@@ -50,7 +59,9 @@ async function coordenadasPorCep(cepDigits: string): Promise<LatLngTuple | null>
   return [lat, lng];
 }
 
-async function coordenadasPorEndereco(info: ViaCepResponse): Promise<LatLngTuple> {
+async function coordenadasPorEndereco(
+  info: ViaCepResponse,
+): Promise<LatLngTuple> {
   const params = new URLSearchParams({
     format: 'json',
     limit: '1',
