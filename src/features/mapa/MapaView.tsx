@@ -20,7 +20,7 @@ function pinHtml(fill: string, size = 1) {
 
 function icone(local: LocalAnalisado, sel: boolean, destaque: boolean) {
   const lula = local.lulaVence;
-  const scale = sel ? 1.2 : 1;
+  const scale = sel ? 1.6 : 1;
   const fill = lula ? 'var(--color-accent-600)' : '#2463bd';
   const w = Math.round(24 * scale);
   const h = Math.round(32 * scale);
@@ -144,7 +144,10 @@ export function MapaView({
           zIndexOffset={l.id === selecionado?.id ? 200 : l.lulaVence ? 50 : 0}
           eventHandlers={{ click: () => onSelect(l.id) }}
         >
-          <Tooltip direction="top" offset={[0, -28]}>
+          <Tooltip
+            direction="top"
+            offset={[0, l.id === selecionado?.id ? -46 : -28]}
+          >
             <strong>{l.nome}</strong>
             <br />
             {UI.tooltipVotos(fmt(l.flavio), fmt(l.lula))}
