@@ -431,6 +431,24 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             onSelect={onSelect}
             layoutKey={`${aba}-${desktop}`}
           />
+          <ul className="mapa-legenda" aria-label={UI.legenda}>
+            <li>
+              <span className="pino lula" />
+              {UI.legendaLula}
+            </li>
+            <li>
+              <span className="pino flavio" />
+              {UI.legendaFlavio}
+            </li>
+            <li>
+              <span className="miolo branco" />
+              {UI.legendaMuitosSemVoto}
+            </li>
+            <li>
+              <span className="miolo preto" />
+              {UI.legendaPoucosSemVoto}
+            </li>
+          </ul>
         </div>
       </div>
 
