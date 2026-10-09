@@ -36,7 +36,8 @@ export const UI = {
     'Encontre os locais de vota\u00e7\u00e3o perto de voc\u00ea e veja onde cada conversa pode virar o resultado.',
   dadosTse:
     'Dados abertos do TSE \u00b7 1\u00ba turno 2026 \u00b7 Presidente \u00b7 todo o Brasil.',
-  fraseVirar: (n: string) => `VIRANDO ${n} VOTOS, LULA VENCE NESTA \u00c1REA`,
+  fraseVirar: (conquistar: string, virar: string) =>
+    `CONQUISTANDO ${conquistar} VOTOS OU VIRANDO ${virar} VOTOS, LULA VENCE NESTA \u00c1REA`,
   fraseLulaVence: (n: string) => `LULA VENCE NESTA \u00c1REA POR ${n} VOTOS`,
   locaisOrdenados: (n: number) =>
     `${n} locais \u00b7 ordenados por quem n\u00e3o escolheu candidato`,

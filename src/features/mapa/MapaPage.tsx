@@ -152,7 +152,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     : !visiveis.length
       ? UI.movaMapa
       : d >= 0
-        ? UI.fraseVirar(fmt(Math.floor(d / 2) + 1))
+        ? UI.fraseVirar(fmt(d + 1), fmt(Math.floor(d / 2) + 1))
         : UI.fraseLulaVence(fmt(-d));
 
   const localSel = locais.find((l) => l.id === selecionado) ?? null;
