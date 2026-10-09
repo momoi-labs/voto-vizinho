@@ -87,11 +87,19 @@ function FlyTo({ center, zoom }: { center: LatLngTuple; zoom: number }) {
   return null;
 }
 
+function MostrarSelecionado({ lat, lng }: { lat: number; lng: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.panInside([lat, lng], { padding: [48, 48] });
+  }, [map, lat, lng]);
+  return null;
+}
+
 type Props = {
   locais: LocalAnalisado[];
   center: LatLngTuple;
   zoom: number;
-  selecionado: string | null;
+  selecionado: LocalAnalisado | null;
   pontoUsuario: LatLngTuple | null;
   pontoRotulo?: string;
   onBoundsChange: (b: LatLngBounds) => void;
@@ -123,12 +131,15 @@ export function MapaView({
       />
       <FlyTo center={center} zoom={zoom} />
       <BoundsWatcher onChange={onBoundsChange} layoutKey={layoutKey} />
+      {selecionado ? (
+        <MostrarSelecionado lat={selecionado.lat} lng={selecionado.lng} />
+      ) : null}
       {locais.map((l) => (
         <Marker
           key={l.id}
           position={[l.lat, l.lng]}
-          icon={icone(l, l.id === selecionado)}
-          zIndexOffset={l.id === selecionado ? 200 : l.lulaVence ? 50 : 0}
+          icon={icone(l, l.id === selecionado?.id)}
+          zIndexOffset={l.id === selecionado?.id ? 200 : l.lulaVence ? 50 : 0}
           eventHandlers={{ click: () => onSelect(l.id) }}
         >
           <Tooltip direction="top" offset={[0, -28]}>
