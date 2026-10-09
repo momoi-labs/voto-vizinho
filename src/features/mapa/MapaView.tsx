@@ -11,6 +11,7 @@ import type { LatLngBounds, LatLngTuple } from 'leaflet';
 import type { LocalAnalisado } from '../../domain/election';
 import { fmt } from '../../lib/format';
 import { UI } from '../../lib/ui-pt';
+import { MarcadoresPrototipo, type Variante } from './PROTOTIPO-marcadores';
 
 function pinHtml(fill: string, miolo: string, size = 1) {
   const w = Math.round(24 * size);
@@ -106,9 +107,15 @@ type Props = {
   onBoundsChange: (b: LatLngBounds) => void;
   onSelect: (id: string) => void;
   layoutKey: string;
+  prototipo?: {
+    variante: Exclude<Variante, 'atual'>;
+    posicao: ReadonlyMap<string, number>;
+    modoSemVoto: boolean;
+  };
 };
 
 export function MapaView({
+  prototipo,
   locais,
   destacados,
   center,
@@ -136,7 +143,16 @@ export function MapaView({
       {selecionado ? (
         <MostrarSelecionado lat={selecionado.lat} lng={selecionado.lng} />
       ) : null}
-      {locais.map((l) => (
+      {prototipo ? (
+        <MarcadoresPrototipo
+          {...prototipo}
+          locais={locais}
+          destacados={destacados}
+          selecionadoId={selecionado?.id}
+          onSelect={onSelect}
+        />
+      ) : null}
+      {(prototipo ? [] : locais).map((l) => (
         <Marker
           key={l.id}
           position={[l.lat, l.lng]}

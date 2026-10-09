@@ -30,6 +30,11 @@ import type { MapaSearch } from '../../lib/mapa-search';
 import { UI } from '../../lib/ui-pt';
 import { LogoCartaz } from './LogoCartaz';
 import { MapaView } from './MapaView';
+import {
+  LegendaPrototipo,
+  TrocaVariante,
+  useVariante,
+} from './PROTOTIPO-marcadores';
 import { LocalDetailPanel } from './LocalDetailPanel';
 import './mapa.css';
 
@@ -142,6 +147,12 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
 
   const { flavio, lula } = useMemo(() => ordenarLocais(visiveis), [visiveis]);
   const destacados = useMemo(() => destacadosPorSemVoto(visiveis), [visiveis]);
+  const [variante, setVariante] = useVariante();
+  const [modoSemVoto, setModoSemVoto] = useState(true);
+  const posicao = useMemo(
+    () => new Map([...flavio, ...lula].map((l, i) => [l.id, i + 1])),
+    [flavio, lula],
+  );
 
   const tf = visiveis.reduce((s, l) => s + l.flavio, 0);
   const tl = visiveis.reduce((s, l) => s + l.lula, 0);
@@ -430,25 +441,39 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             onBoundsChange={onBoundsChange}
             onSelect={onSelect}
             layoutKey={`${aba}-${desktop}`}
+            prototipo={
+              variante === 'atual'
+                ? undefined
+                : { variante, posicao, modoSemVoto }
+            }
           />
-          <ul className="mapa-legenda" aria-label={UI.legenda}>
-            <li>
-              <span className="pino lula" />
-              {UI.legendaLula}
-            </li>
-            <li>
-              <span className="pino flavio" />
-              {UI.legendaFlavio}
-            </li>
-            <li>
-              <span className="miolo branco" />
-              {UI.legendaMuitosSemVoto}
-            </li>
-            <li>
-              <span className="miolo preto" />
-              {UI.legendaPoucosSemVoto}
-            </li>
-          </ul>
+          <TrocaVariante variante={variante} onChange={setVariante} />
+          {variante !== 'atual' ? (
+            <LegendaPrototipo
+              variante={variante}
+              modoSemVoto={modoSemVoto}
+              setModoSemVoto={setModoSemVoto}
+            />
+          ) : (
+            <ul className="mapa-legenda" aria-label={UI.legenda}>
+              <li>
+                <span className="pino lula" />
+                {UI.legendaLula}
+              </li>
+              <li>
+                <span className="pino flavio" />
+                {UI.legendaFlavio}
+              </li>
+              <li>
+                <span className="miolo branco" />
+                {UI.legendaMuitosSemVoto}
+              </li>
+              <li>
+                <span className="miolo preto" />
+                {UI.legendaPoucosSemVoto}
+              </li>
+            </ul>
+          )}
         </div>
       </div>
 
