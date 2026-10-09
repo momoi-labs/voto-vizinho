@@ -176,6 +176,24 @@
   font-weight: 600;
 }
 
+.mapa-tabela td.n.sem-voto {
+  font-weight: 600;
+}
+
+.vv-marker.destaque::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 39%;
+  width: 150%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgb(245 158 11 / 0.35);
+  box-shadow: 0 0 0 2px rgb(245 158 11 / 0.9);
+  z-index: -1;
+}
+
 .mapa-tabela small {
   display: block;
   color: var(--color-muted-foreground);

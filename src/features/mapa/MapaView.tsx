@@ -18,14 +18,14 @@ function pinHtml(fill: string, size = 1) {
   return `<svg width="${w}" height="${h}" viewBox="0 0 24 32"><path d="M12 31s10-11.2 10-18.5C22 6.2 17.5 1.5 12 1.5S2 6.2 2 12.5C2 19.8 12 31 12 31z" fill="${fill}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.6" fill="#fff"/></svg>`;
 }
 
-function icone(local: LocalAnalisado, sel: boolean) {
+function icone(local: LocalAnalisado, sel: boolean, destaque: boolean) {
   const lula = local.lulaVence;
   const scale = sel ? 1.2 : 1;
   const fill = lula ? 'var(--color-accent-600)' : '#2463bd';
   const w = Math.round(24 * scale);
   const h = Math.round(32 * scale);
   return L.divIcon({
-    className: `vv-marker pin${lula ? ' lula' : ''}${sel ? ' sel' : ''}`,
+    className: `vv-marker pin${lula ? ' lula' : ''}${sel ? ' sel' : ''}${destaque ? ' destaque' : ''}`,
     html: pinHtml(fill, scale),
     iconSize: [w, h],
     iconAnchor: [Math.round(w / 2), h],
@@ -97,6 +97,7 @@ function MostrarSelecionado({ lat, lng }: { lat: number; lng: number }) {
 
 type Props = {
   locais: LocalAnalisado[];
+  destacados: ReadonlySet<string>;
   center: LatLngTuple;
   zoom: number;
   selecionado: LocalAnalisado | null;
@@ -109,6 +110,7 @@ type Props = {
 
 export function MapaView({
   locais,
+  destacados,
   center,
   zoom,
   selecionado,
@@ -138,7 +140,7 @@ export function MapaView({
         <Marker
           key={l.id}
           position={[l.lat, l.lng]}
-          icon={icone(l, l.id === selecionado?.id)}
+          icon={icone(l, l.id === selecionado?.id, destacados.has(l.id))}
           zIndexOffset={l.id === selecionado?.id ? 200 : l.lulaVence ? 50 : 0}
           eventHandlers={{ click: () => onSelect(l.id) }}
         >
@@ -146,6 +148,8 @@ export function MapaView({
             <strong>{l.nome}</strong>
             <br />
             {UI.tooltipVotos(fmt(l.flavio), fmt(l.lula))}
+            <br />
+            {UI.tooltipSemVoto(fmt(l.semVoto))}
           </Tooltip>
         </Marker>
       ))}

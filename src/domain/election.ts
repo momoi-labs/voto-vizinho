@@ -23,6 +23,7 @@ export type LocalAnalisado = LocalBruto & {
   virar: number;
   conquistar: number;
   reserva: number;
+  semVoto: number;
   conquistaBasta: boolean;
   pct: number;
   lulaVence: boolean;
@@ -40,6 +41,7 @@ export function analisarLocal(l: LocalBruto): LocalAnalisado {
     dif,
     lulaVence,
     reserva,
+    semVoto: l.abstencoes + l.brancos + l.nulos,
     virar,
     conquistar,
     conquistaBasta: conquistar <= reserva,
@@ -50,11 +52,19 @@ export function analisarLocal(l: LocalBruto): LocalAnalisado {
 export function ordenarLocais(locais: LocalAnalisado[]) {
   const flavio = locais
     .filter((l) => !l.lulaVence)
-    .sort((a, b) => a.virar - b.virar);
+    .sort((a, b) => b.semVoto - a.semVoto || b.virar - a.virar);
   const lula = locais
     .filter((l) => l.lulaVence)
-    .sort((a, b) => -a.dif - -b.dif);
+    .sort((a, b) => b.semVoto - a.semVoto || b.dif - a.dif);
   return { flavio, lula };
+}
+
+export function destacadosPorSemVoto(locais: LocalAnalisado[]) {
+  const valores = locais.map((l) => l.semVoto).sort((a, b) => b - a);
+  const limiar = valores[Math.ceil(valores.length / 4) - 1];
+  return new Set(
+    locais.filter((l) => l.semVoto > 0 && l.semVoto >= limiar).map((l) => l.id),
+  );
 }
 
 export { TEXTOS } from '../lib/ui-pt';

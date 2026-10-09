@@ -10,7 +10,11 @@ import {
 } from '@momoi-labs/kiso-react';
 import { LocateFixed } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
-import { ordenarLocais, type LocalAnalisado } from '../../domain/election';
+import {
+  destacadosPorSemVoto,
+  ordenarLocais,
+  type LocalAnalisado,
+} from '../../domain/election';
 import {
   garantirLocaisParaBounds,
   getExemploDoIndex,
@@ -137,6 +141,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
   }, [locais, bounds, areaAmpla]);
 
   const { flavio, lula } = useMemo(() => ordenarLocais(visiveis), [visiveis]);
+  const destacados = useMemo(() => destacadosPorSemVoto(visiveis), [visiveis]);
 
   const tf = visiveis.reduce((s, l) => s + l.flavio, 0);
   const tl = visiveis.reduce((s, l) => s + l.lula, 0);
@@ -343,13 +348,16 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                 color: 'var(--color-muted-foreground)',
               }}
             >
-              {UI.menorNumeroVirar}
+              {UI.maisSemVotoPrimeiro}
             </p>
             <table className="mapa-tabela">
               <thead>
                 <tr>
                   <th />
                   <th>Local</th>
+                  <th className="n" title={UI.semVotoExp}>
+                    {UI.semVoto}
+                  </th>
                   <th className="n">Virar</th>
                   <th className="n">Conquistar</th>
                   <th className="n">{UI.diferenca}</th>
@@ -370,6 +378,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                         {fmt(l.aptos)} aptos
                       </small>
                     </td>
+                    <td className="n sem-voto">{fmt(l.semVoto)}</td>
                     <td className="n red">{fmt(l.virar)}</td>
                     <td className="n">
                       {l.conquistaBasta ? fmt(l.conquistar) : UI.naoBasta}
@@ -379,7 +388,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                 ))}
                 {lula.length > 0 ? (
                   <tr className="sec">
-                    <td colSpan={5}>{UI.ondeLulaVence}</td>
+                    <td colSpan={6}>{UI.ondeLulaVence}</td>
                   </tr>
                 ) : null}
                 {lula.map((l) => (
@@ -397,6 +406,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                         {l.municipio} {UI.sep} {l.bairro}
                       </small>
                     </td>
+                    <td className="n sem-voto">{fmt(l.semVoto)}</td>
                     <td className="n mapa-sym">{UI.travessao}</td>
                     <td className="n mapa-sym">{UI.travessao}</td>
                     <td className="n">+{pctAptos(l.pct)}</td>
@@ -411,6 +421,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
         >
           <MapaView
             locais={visiveis}
+            destacados={destacados}
             center={center}
             zoom={zoom}
             selecionado={localSel}

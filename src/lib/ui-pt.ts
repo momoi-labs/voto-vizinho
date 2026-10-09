@@ -9,7 +9,9 @@ export const UI = {
   visualizacao: 'Visualiza\u00e7\u00e3o',
   usarLocalizacao: 'Usar minha localiza\u00e7\u00e3o',
   votosFlavio: 'Votos Fl\u00e1vio',
-  menorNumeroVirar: 'Menor n\u00famero de votos a virar primeiro.',
+  maisSemVotoPrimeiro: 'Mais absten\u00e7\u00f5es + brancos + nulos primeiro.',
+  semVoto: 'Sem voto',
+  semVotoExp: 'Absten\u00e7\u00f5es + brancos + nulos',
   diferenca: 'Diferen\u00e7a',
   naoBasta: 'n\u00e3o basta',
   ondeLulaVence: '\u2605 Onde Lula j\u00e1 vence',
@@ -37,7 +39,7 @@ export const UI = {
   fraseVirar: (n: string) => `VIRANDO ${n} VOTOS, LULA VENCE NESTA \u00c1REA`,
   fraseLulaVence: (n: string) => `LULA VENCE NESTA \u00c1REA POR ${n} VOTOS`,
   locaisOrdenados: (n: number) =>
-    `${n} locais \u00b7 ordenados por votos a virar`,
+    `${n} locais \u00b7 ordenados por quem n\u00e3o escolheu candidato`,
   flavioBolsonaro: 'Fl\u00e1vio Bolsonaro',
   dadoFicticio: 'Dado fict\u00edcio',
   localVotacao: 'Local de vota\u00e7\u00e3o',
@@ -53,6 +55,7 @@ export const UI = {
   tseTurno: 'TSE \u00b7 1\u00ba turno 2026',
   tooltipVotos: (flavio: string, lula: string) =>
     `Fl\u00e1vio Bolsonaro ${flavio} \u00b7 Lula ${lula}`,
+  tooltipSemVoto: (n: string) => `Absten\u00e7\u00f5es + brancos + nulos: ${n}`,
 } as const;
 
 export const TEXTOS = {
