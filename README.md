@@ -1,8 +1,8 @@
 # Voto Vizinho
 
 Browser application for exploring polling locations and electoral data to support
-local mobilization. This repository currently contains the application scaffold.
-Maps, location search, electoral calculations, and TSE datasets are not integrated.
+local mobilization. It shows 2026 first-round presidential results (Lula and
+Flávio) for every polling location in Brazil, on a map of the user's area.
 
 ## Run locally
 
@@ -22,11 +22,24 @@ pnpm dev
 ```
 
 Open <http://localhost:8777>. The server fails if that port is occupied.
-The starter has `/` and `/mapa` routes, with Kiso React components and the system
-color scheme. The red accent uses Kiso's existing appearance setting.
+`/` finds the user's area by CEP or browser geolocation. `/mapa` shows the
+polling locations inside the visible map area, with totals, a list sorted by the
+votes needed to flip each location, and a detail panel per location.
 
-The supplied project summary references `prototipo/` and TSE data directories.
-Those files are absent from this checkout.
+## Data
+
+The app reads generated JSON from `public/data/locais/`: one `{UF}.json` per state
+and an `index.json` with each state's bounds. The browser only loads the states
+that intersect the visible map. These files are committed because the raw TSE
+files are not part of this repository.
+
+To regenerate them, point `DADOS_TSE` to the folder with the TSE CSVs:
+
+```sh
+DADOS_TSE=/path/to/tse-csvs pnpm data:build
+```
+
+The script is `scripts/gerar_locais_por_uf.py` and needs Python 3.
 
 ## Check and build
 
@@ -51,15 +64,22 @@ pnpm preview
   support. It includes `@momoi-labs/kiso` as a dependency. Its stylesheet loads
   Inter and JetBrains Mono from Google Fonts.
 - `lucide-react` satisfies Kiso React's icon peer dependency.
+- Leaflet and React Leaflet render the map.
 - ESLint and Prettier check code and formatting.
+
+The browser calls these public services directly, without API keys:
+
+- [ViaCEP](https://viacep.com.br/) turns a CEP into an address.
+- [BrasilAPI](https://brasilapi.com.br/) provides coordinates for a CEP.
+- [Nominatim](https://nominatim.openstreetmap.org/) geocodes the address when
+  BrasilAPI has no coordinates.
+- [OpenStreetMap](https://www.openstreetmap.org/) serves the map tiles.
 
 TypeScript stays on 6.0 because the selected lint tooling requires a
 version below 6.1. Dependency versions are pinned in `package.json`.
 
-Add TanStack Query when browser data fetching is implemented. Add TanStack Form
-only when form state or validation needs it. Add Leaflet and React Leaflet with
-the map implementation. The scaffold has no backend, database, API client,
-Tailwind setup, or deployment service.
+Add TanStack Form only when form state or validation needs it. The app has no
+backend, database, Tailwind setup, or deployment service.
 
 ## References
 
