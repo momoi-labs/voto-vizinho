@@ -19,6 +19,7 @@ export function LocalDetailPanel({ local: l }: Props) {
       UI.brancosNulos(fmt(l.brancos), fmt(l.nulos)),
     ],
     [UI.abstencoes, l.abstencoes, 'abst'],
+    [UI.semVotoExp, l.semVoto, 'sem-voto'],
   ] as const;
 
   return (

@@ -12,23 +12,28 @@ import type { LocalAnalisado } from '../../domain/election';
 import { fmt } from '../../lib/format';
 import { UI } from '../../lib/ui-pt';
 
-function pinHtml(fill: string, size = 1) {
-  const w = Math.round(24 * size);
-  const h = Math.round(32 * size);
-  return `<svg width="${w}" height="${h}" viewBox="0 0 24 32"><path d="M12 31s10-11.2 10-18.5C22 6.2 17.5 1.5 12 1.5S2 6.2 2 12.5C2 19.8 12 31 12 31z" fill="${fill}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.6" fill="#fff"/></svg>`;
-}
+const ROTULO = {
+  normal: { fonte: 10, folga: 10, h: 18 },
+  destaque: { fonte: 13, folga: 14, h: 24 },
+  sel: { fonte: 15, folga: 20, h: 30 },
+};
 
-function icone(local: LocalAnalisado, sel: boolean) {
-  const lula = local.lulaVence;
-  const scale = sel ? 1.2 : 1;
-  const fill = lula ? 'var(--color-accent-600)' : '#2463bd';
-  const w = Math.round(24 * scale);
-  const h = Math.round(32 * scale);
+function icone(local: LocalAnalisado, sel: boolean, destaque: boolean) {
+  const texto = fmt(local.semVoto);
+  const { fonte, folga, h } =
+    ROTULO[sel ? 'sel' : destaque ? 'destaque' : 'normal'];
+  const w = Math.round(texto.length * fonte * 0.62 + folga);
+  const classes = [
+    'vv-rotulo',
+    local.lulaVence ? 'lula' : 'flavio',
+    destaque ? 'destaque' : '',
+    sel ? 'sel' : '',
+  ].join(' ');
   return L.divIcon({
-    className: `vv-marker pin${lula ? ' lula' : ''}${sel ? ' sel' : ''}`,
-    html: pinHtml(fill, scale),
+    className: 'vv-marker',
+    html: `<span class="${classes}" style="width:${w}px;height:${h}px">${texto}</span>`,
     iconSize: [w, h],
-    iconAnchor: [Math.round(w / 2), h],
+    iconAnchor: [Math.round(w / 2), Math.round(h / 2)],
   });
 }
 
@@ -97,6 +102,7 @@ function MostrarSelecionado({ lat, lng }: { lat: number; lng: number }) {
 
 type Props = {
   locais: LocalAnalisado[];
+  destacados: ReadonlySet<string>;
   center: LatLngTuple;
   zoom: number;
   selecionado: LocalAnalisado | null;
@@ -109,6 +115,7 @@ type Props = {
 
 export function MapaView({
   locais,
+  destacados,
   center,
   zoom,
   selecionado,
@@ -118,6 +125,7 @@ export function MapaView({
   onSelect,
   layoutKey,
 }: Props) {
+  const maxSemVoto = Math.max(0, ...locais.map((l) => l.semVoto));
   return (
     <MapContainer
       center={center}
@@ -134,21 +142,30 @@ export function MapaView({
       {selecionado ? (
         <MostrarSelecionado lat={selecionado.lat} lng={selecionado.lng} />
       ) : null}
-      {locais.map((l) => (
-        <Marker
-          key={l.id}
-          position={[l.lat, l.lng]}
-          icon={icone(l, l.id === selecionado?.id)}
-          zIndexOffset={l.id === selecionado?.id ? 200 : l.lulaVence ? 50 : 0}
-          eventHandlers={{ click: () => onSelect(l.id) }}
-        >
-          <Tooltip direction="top" offset={[0, -28]}>
-            <strong>{l.nome}</strong>
-            <br />
-            {UI.tooltipVotos(fmt(l.flavio), fmt(l.lula))}
-          </Tooltip>
-        </Marker>
-      ))}
+      {locais.map((l) => {
+        const sel = l.id === selecionado?.id;
+        const destaque = destacados.has(l.id);
+        return (
+          <Marker
+            key={l.id}
+            position={[l.lat, l.lng]}
+            icon={icone(l, sel, destaque)}
+            zIndexOffset={sel ? 1000 + maxSemVoto : l.semVoto}
+            eventHandlers={{ click: () => onSelect(l.id) }}
+          >
+            <Tooltip
+              direction="top"
+              offset={[0, sel ? -15 : destaque ? -12 : -9]}
+            >
+              <strong>{l.nome}</strong>
+              <br />
+              {UI.tooltipVotos(fmt(l.flavio), fmt(l.lula))}
+              <br />
+              {UI.semVotoExp}: {fmt(l.semVoto)}
+            </Tooltip>
+          </Marker>
+        );
+      })}
       {pontoUsuario ? (
         <Marker
           position={pontoUsuario}

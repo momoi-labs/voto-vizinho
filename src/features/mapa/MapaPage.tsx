@@ -10,7 +10,11 @@ import {
 } from '@momoi-labs/kiso-react';
 import { LocateFixed } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
-import { ordenarLocais, type LocalAnalisado } from '../../domain/election';
+import {
+  destacadosPorSemVoto,
+  ordenarLocais,
+  type LocalAnalisado,
+} from '../../domain/election';
 import {
   garantirLocaisParaBounds,
   getExemploDoIndex,
@@ -136,7 +140,9 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     return locais.filter((l) => bounds.contains([l.lat, l.lng]));
   }, [locais, bounds, areaAmpla]);
 
-  const { flavio, lula } = useMemo(() => ordenarLocais(visiveis), [visiveis]);
+  const ordenados = useMemo(() => ordenarLocais(visiveis), [visiveis]);
+  const destacados = useMemo(() => destacadosPorSemVoto(visiveis), [visiveis]);
+  const lulaVenceEm = visiveis.filter((l) => l.lulaVence).length;
 
   const tf = visiveis.reduce((s, l) => s + l.flavio, 0);
   const tl = visiveis.reduce((s, l) => s + l.lula, 0);
@@ -147,7 +153,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     : !visiveis.length
       ? UI.movaMapa
       : d >= 0
-        ? UI.fraseVirar(fmt(Math.floor(d / 2) + 1))
+        ? UI.fraseVirar(fmt(d + 1), fmt(Math.floor(d / 2) + 1))
         : UI.fraseLulaVence(fmt(-d));
 
   const localSel = locais.find((l) => l.id === selecionado) ?? null;
@@ -252,7 +258,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
         <div className="mapa-stats">
           {[
             ['Locais', fmt(visiveis.length), ''],
-            ['Lula vence em', fmt(lula.length), 'red mapa-stat-lula-vence'],
+            ['Lula vence em', fmt(lulaVenceEm), 'red mapa-stat-lula-vence'],
             [UI.votosFlavio, fmt(tf), 'blue'],
             ['Votos Lula', fmt(tl), 'red'],
           ].map(([label, val, cls]) => (
@@ -343,26 +349,34 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                 color: 'var(--color-muted-foreground)',
               }}
             >
-              {UI.menorNumeroVirar}
+              {UI.maisSemVotoPrimeiro}
             </p>
             <table className="mapa-tabela">
               <thead>
                 <tr>
                   <th />
                   <th>Local</th>
+                  <th className="n" title={UI.semVotoExp}>
+                    {UI.semVoto}
+                  </th>
                   <th className="n">Virar</th>
                   <th className="n">Conquistar</th>
                   <th className="n">{UI.diferenca}</th>
                 </tr>
               </thead>
               <tbody>
-                {flavio.map((l, i) => (
+                {ordenados.map((l, i) => (
                   <tr
                     key={l.id}
                     className={l.id === selecionado ? 'sel' : ''}
                     onClick={() => onSelect(l.id)}
                   >
-                    <td>{String(i + 1).padStart(2, '0')}</td>
+                    <td
+                      className={`pos ${l.lulaVence ? 'lula' : 'flavio'}`}
+                      title={l.lulaVence ? UI.legendaLula : UI.legendaFlavio}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </td>
                     <td>
                       <b>{l.nome}</b>
                       <small>
@@ -370,36 +384,22 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                         {fmt(l.aptos)} aptos
                       </small>
                     </td>
-                    <td className="n red">{fmt(l.virar)}</td>
-                    <td className="n">
-                      {l.conquistaBasta ? fmt(l.conquistar) : UI.naoBasta}
-                    </td>
-                    <td className="n">{pctAptos(l.pct)}</td>
-                  </tr>
-                ))}
-                {lula.length > 0 ? (
-                  <tr className="sec">
-                    <td colSpan={5}>{UI.ondeLulaVence}</td>
-                  </tr>
-                ) : null}
-                {lula.map((l) => (
-                  <tr
-                    key={l.id}
-                    className={l.id === selecionado ? 'sel' : ''}
-                    onClick={() => onSelect(l.id)}
-                  >
-                    <td aria-hidden="true" className="mapa-sym">
-                      {UI.marcadorLulaVence}
-                    </td>
-                    <td>
-                      <b>{l.nome}</b>
-                      <small>
-                        {l.municipio} {UI.sep} {l.bairro}
-                      </small>
-                    </td>
-                    <td className="n mapa-sym">{UI.travessao}</td>
-                    <td className="n mapa-sym">{UI.travessao}</td>
-                    <td className="n">+{pctAptos(l.pct)}</td>
+                    <td className="n sem-voto">{fmt(l.semVoto)}</td>
+                    {l.lulaVence ? (
+                      <>
+                        <td className="n mapa-sym">{UI.travessao}</td>
+                        <td className="n mapa-sym">{UI.travessao}</td>
+                        <td className="n">+{pctAptos(l.pct)}</td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="n red">{fmt(l.virar)}</td>
+                        <td className="n">
+                          {l.conquistaBasta ? fmt(l.conquistar) : UI.naoBasta}
+                        </td>
+                        <td className="n">{pctAptos(l.pct)}</td>
+                      </>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -411,6 +411,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
         >
           <MapaView
             locais={visiveis}
+            destacados={destacados}
             center={center}
             zoom={zoom}
             selecionado={localSel}
@@ -420,6 +421,20 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             onSelect={onSelect}
             layoutKey={`${aba}-${desktop}`}
           />
+          <ul className="mapa-legenda" aria-label={UI.legenda}>
+            <li>
+              <span className="cor lula" />
+              {UI.legendaLula}
+            </li>
+            <li>
+              <span className="cor flavio" />
+              {UI.legendaFlavio}
+            </li>
+            <li>
+              <span className="vv-rotulo amostra">{UI.legendaAmostra}</span>
+              {UI.legendaSemVoto}
+            </li>
+          </ul>
         </div>
       </div>
 
