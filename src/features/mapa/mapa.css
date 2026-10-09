@@ -43,7 +43,11 @@
 }
 
 .mapa-tabela .mapa-sym {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
   font-weight: 600;
 }
 

@@ -105,9 +105,17 @@ export function WelcomePage() {
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
               />
-              <Button type="submit" disabled={carregando}>Buscar</Button>
+              <Button type="submit" disabled={carregando}>
+                Buscar
+              </Button>
             </form>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--color-muted-foreground)' }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: '0.75rem',
+                color: 'var(--color-muted-foreground)',
+              }}
+            >
               Exemplo:{' '}
               <button
                 type="button"
@@ -126,7 +134,10 @@ export function WelcomePage() {
               (Bosque, Rio Branco)
             </p>
             {erro ? (
-              <p role="alert" style={{ margin: 0, color: 'var(--color-accent-600)' }}>
+              <p
+                role="alert"
+                style={{ margin: 0, color: 'var(--color-accent-600)' }}
+              >
                 {erro}
               </p>
             ) : null}

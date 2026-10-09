@@ -17,7 +17,11 @@ import {
 } from '../../data/load-locais';
 import { fmt, pctAptos } from '../../lib/format';
 import { boundsIguais } from '../../lib/map-bounds';
-import { localizarCep, pedirLocalizacao, RIO_BRANCO_CENTER } from '../../lib/geocode';
+import {
+  localizarCep,
+  pedirLocalizacao,
+  RIO_BRANCO_CENTER,
+} from '../../lib/geocode';
 import type { MapaSearch } from '../../lib/mapa-search';
 import { UI } from '../../lib/ui-pt';
 import { LogoCartaz } from './LogoCartaz';
@@ -86,8 +90,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     panLocal?.center ??
     focoAtivo?.latlng ??
     (exemplo ? RIO_BRANCO_CENTER : BRASIL_CENTER);
-  const zoom =
-    panLocal?.zoom ?? (focoAtivo ? 15 : exemplo ? 14 : 4);
+  const zoom = panLocal?.zoom ?? (focoAtivo ? 15 : exemplo ? 14 : 4);
   const ponto = focoAtivo?.latlng ?? null;
   const pontoRotulo = focoAtivo?.rotulo;
 
@@ -140,10 +143,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     return locais.filter((l) => bounds.contains([l.lat, l.lng]));
   }, [locais, bounds, areaAmpla]);
 
-  const { flavio, lula } = useMemo(
-    () => ordenarLocais(visiveis),
-    [visiveis],
-  );
+  const { flavio, lula } = useMemo(() => ordenarLocais(visiveis), [visiveis]);
 
   const tf = visiveis.reduce((s, l) => s + l.flavio, 0);
   const tl = visiveis.reduce((s, l) => s + l.lula, 0);
@@ -154,8 +154,8 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     : !visiveis.length
       ? UI.movaMapa
       : d >= 0
-      ? UI.fraseVirar(fmt(Math.floor(d / 2) + 1))
-      : UI.fraseLulaVence(fmt(-d));
+        ? UI.fraseVirar(fmt(Math.floor(d / 2) + 1))
+        : UI.fraseLulaVence(fmt(-d));
 
   const localSel = locais.find((l) => l.id === selecionado) ?? null;
 
@@ -204,7 +204,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             zIndex: 50,
             top: 12,
             left: '50%',
-            transform: 'translateX(\'50%\')',
+            transform: "translateX('50%')",
             background: 'var(--color-foreground)',
             color: 'var(--color-background)',
             padding: '0.625rem 0.875rem',
@@ -295,12 +295,11 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                   fontWeight: 600,
                   fontSize: '1.25rem',
                   fontVariantNumeric: 'tabular-nums',
-                  color:
-                    cls.includes('red')
-                      ? 'var(--color-accent-600)'
-                      : cls.includes('blue')
-                        ? '#2463bd'
-                        : 'inherit',
+                  color: cls.includes('red')
+                    ? 'var(--color-accent-600)'
+                    : cls.includes('blue')
+                      ? '#2463bd'
+                      : 'inherit',
                 }}
               >
                 {val}
@@ -379,7 +378,8 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
                     <td>
                       <b>{l.nome}</b>
                       <small>
-                        {l.municipio} {UI.sep} {l.bairro} {UI.sep} {fmt(l.aptos)} aptos
+                        {l.municipio} {UI.sep} {l.bairro} {UI.sep}{' '}
+                        {fmt(l.aptos)} aptos
                       </small>
                     </td>
                     <td className="n red">{fmt(l.virar)}</td>
@@ -418,7 +418,9 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             </table>
           </div>
         </div>
-        <div className={`mapa-mapa ${aba === 'lista' && !desktop ? 'off' : ''}`}>
+        <div
+          className={`mapa-mapa ${aba === 'lista' && !desktop ? 'off' : ''}`}
+        >
           <MapaView
             locais={visiveis}
             center={center}

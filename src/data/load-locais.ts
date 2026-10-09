@@ -1,5 +1,9 @@
 import type { LatLngBounds } from 'leaflet';
-import { analisarLocal, type LocalAnalisado, type LocalBruto } from '../domain/election';
+import {
+  analisarLocal,
+  type LocalAnalisado,
+  type LocalBruto,
+} from '../domain/election';
 
 type UfBounds = {
   south: number;
@@ -50,7 +54,10 @@ function ufsNoViewport(bounds: LatLngBounds, index: LocaisIndex): string[] {
   });
 }
 
-async function carregarUf(uf: string, exemploFicticio: boolean): Promise<LocalAnalisado[]> {
+async function carregarUf(
+  uf: string,
+  exemploFicticio: boolean,
+): Promise<LocalAnalisado[]> {
   const cached = porUf.get(uf);
   if (cached) return cached;
 
@@ -104,7 +111,12 @@ export async function garantirLocaisPertoDe(
   const ufs = index.ufs.filter((uf) => {
     const b = index.bounds[uf];
     if (!b) return false;
-    return !(b.north < south || b.south > north || b.east < west || b.west > east);
+    return !(
+      b.north < south ||
+      b.south > north ||
+      b.east < west ||
+      b.west > east
+    );
   });
   await Promise.all(ufs.map((uf) => carregarUf(uf, exemploFicticio)));
   return ufs.flatMap((uf) => porUf.get(uf) ?? []);

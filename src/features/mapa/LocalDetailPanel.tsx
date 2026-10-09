@@ -58,7 +58,9 @@ export function LocalDetailPanel({ local: l }: Props) {
             }}
           >
             <span>{rot}</span>
-            <span style={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>
+            <span
+              style={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}
+            >
               {fmt(n)}
             </span>
             {sub ? (
@@ -89,7 +91,9 @@ export function LocalDetailPanel({ local: l }: Props) {
             >
               {UI.lulaVenceAqui(fmt(-l.dif))}
             </p>
-            <p style={{ margin: 0, fontSize: '0.8125rem' }}>{TEXTOS.mantenha}</p>
+            <p style={{ margin: 0, fontSize: '0.8125rem' }}>
+              {TEXTOS.mantenha}
+            </p>
           </CardContent>
         </Card>
       ) : (
@@ -128,7 +132,9 @@ export function LocalDetailPanel({ local: l }: Props) {
                 >
                   {fmt(l.virar)}
                 </p>
-                <p style={{ margin: 0, fontWeight: 600, fontSize: '0.8125rem' }}>
+                <p
+                  style={{ margin: 0, fontWeight: 600, fontSize: '0.8125rem' }}
+                >
                   votos virados
                 </p>
                 <p
@@ -166,7 +172,11 @@ export function LocalDetailPanel({ local: l }: Props) {
                       {fmt(l.conquistar)}
                     </p>
                     <p
-                      style={{ margin: 0, fontWeight: 600, fontSize: '0.8125rem' }}
+                      style={{
+                        margin: 0,
+                        fontWeight: 600,
+                        fontSize: '0.8125rem',
+                      }}
                     >
                       votos conquistados
                     </p>
@@ -182,10 +192,19 @@ export function LocalDetailPanel({ local: l }: Props) {
                   </>
                 ) : (
                   <>
-                    <p className="mapa-sym" style={{ margin: 0, fontSize: '2rem' }}>
+                    <p
+                      className="mapa-sym"
+                      style={{ margin: 0, fontSize: '2rem' }}
+                    >
                       {UI.travessao}
                     </p>
-                    <p style={{ margin: 0, fontWeight: 600, fontSize: '0.8125rem' }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontWeight: 600,
+                        fontSize: '0.8125rem',
+                      }}
+                    >
                       {UI.soConquistarNaoBasta}
                     </p>
                     <p
