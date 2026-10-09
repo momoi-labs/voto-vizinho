@@ -66,10 +66,6 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
     latlng: LatLngTuple;
     rotulo?: string;
   } | null>(null);
-  const [panLocal, setPanLocal] = useState<{
-    center: LatLngTuple;
-    zoom: number;
-  } | null>(null);
   const [cep, setCep] = useState('');
 
   const coordenadasUrl = useMemo((): LatLngTuple | null => {
@@ -87,10 +83,8 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
   }, [focoManual, coordenadasUrl, rotulo, geo]);
 
   const center =
-    panLocal?.center ??
-    focoAtivo?.latlng ??
-    (exemplo ? RIO_BRANCO_CENTER : BRASIL_CENTER);
-  const zoom = panLocal?.zoom ?? (focoAtivo ? 15 : exemplo ? 14 : 4);
+    focoAtivo?.latlng ?? (exemplo ? RIO_BRANCO_CENTER : BRASIL_CENTER);
+  const zoom = focoAtivo ? 15 : exemplo ? 14 : 4;
   const ponto = focoAtivo?.latlng ?? null;
   const pontoRotulo = focoAtivo?.rotulo;
 
@@ -111,7 +105,6 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
       .then((ex) => {
         if (!ex) return;
         setFocoManual({ latlng: [ex.lat, ex.lng], rotulo: ex.rotulo });
-        setPanLocal(null);
       })
       .catch(() => {
         /* mapa ainda carrega por bounds */
@@ -161,17 +154,12 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
 
   const definirFoco = (latlng: LatLngTuple, label?: string) => {
     setFocoManual({ latlng, rotulo: label });
-    setPanLocal(null);
     setMensagem(null);
   };
 
   const onSelect = (id: string) => {
     setSelecionado(id);
-    const l = locais.find((x) => x.id === id);
-    if (l && !desktop) setAba('mapa');
-    if (l) {
-      setPanLocal({ center: [l.lat, l.lng], zoom: Math.max(zoom, 15) });
-    }
+    if (!desktop && locais.some((x) => x.id === id)) setAba('mapa');
   };
 
   const buscarCepForm = async (e: React.FormEvent) => {
@@ -425,7 +413,7 @@ export function MapaPage({ exemplo, lat, lng, rotulo }: Props) {
             locais={visiveis}
             center={center}
             zoom={zoom}
-            selecionado={selecionado}
+            selecionado={localSel}
             pontoUsuario={ponto}
             pontoRotulo={pontoRotulo}
             onBoundsChange={onBoundsChange}
