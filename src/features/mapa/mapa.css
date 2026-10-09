@@ -176,19 +176,105 @@
   font-weight: 600;
 }
 
+.mapa-tabela td.n.sem-voto {
+  font-weight: 600;
+}
+
+.mapa-legenda {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 1.5rem;
+  z-index: 3;
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.5rem 0.625rem;
+  list-style: none;
+  font-size: 0.6875rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+}
+
+.mapa-legenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.mapa-legenda .cor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.mapa-legenda .cor.lula {
+  background: var(--color-accent-600);
+}
+
+.mapa-legenda .cor.flavio {
+  background: #2463bd;
+}
+
+.vv-rotulo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border: 1.5px solid #fff;
+  border-radius: 999px;
+  color: #fff;
+  font:
+    500 10px system-ui,
+    sans-serif;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+  opacity: 0.85;
+}
+
+.vv-rotulo.lula {
+  background: var(--color-accent-600);
+}
+
+.vv-rotulo.flavio {
+  background: #2463bd;
+}
+
+.vv-rotulo.destaque {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.vv-rotulo.sel {
+  border: 3px solid #000;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 1;
+}
+
+.mapa-legenda .vv-rotulo.amostra {
+  padding: 1px 6px;
+  background: var(--color-muted-foreground);
+  opacity: 1;
+}
+
+.mapa-tabela td.pos {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.mapa-tabela td.pos.lula {
+  color: var(--color-accent-600);
+}
+
+.mapa-tabela td.pos.flavio {
+  color: #2463bd;
+}
+
 .mapa-tabela small {
   display: block;
   color: var(--color-muted-foreground);
   font-size: 0.6875rem;
-}
-
-.mapa-tabela .sec td {
-  background: var(--color-accent-50);
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-accent-700);
 }
 
 .logo-cartaz {
@@ -263,7 +349,7 @@
 
   .mapa-resumo .frase {
     font-size: clamp(1.5rem, 2.4vw, 2.125rem);
-    max-width: 28ch;
+    max-width: 48ch;
   }
 
   .mapa-stats {
