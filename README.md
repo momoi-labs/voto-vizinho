@@ -79,7 +79,10 @@ TypeScript stays on 6.0 because the selected lint tooling requires a
 version below 6.1. Dependency versions are pinned in `package.json`.
 
 Add TanStack Form only when form state or validation needs it. The app has no
-backend, database, Tailwind setup, or deployment service.
+backend, database, or Tailwind setup.
+
+Cloudflare Workers serves `dist` as static assets. `wrangler.jsonc` holds the
+config and `public/_headers` sets security and cache headers.
 
 ## References
 
