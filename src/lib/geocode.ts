@@ -59,37 +59,77 @@ async function coordenadasPorCep(
   return [lat, lng];
 }
 
-async function coordenadasPorEndereco(
-  info: ViaCepResponse,
-): Promise<LatLngTuple> {
+/** Política do Nominatim: no máximo 1 requisição por segundo. */
+const NOMINATIM_INTERVALO_MS = 1_000;
+let proximaNominatim = 0;
+
+async function aguardarVezNominatim() {
+  const agora = Date.now();
+  const espera = proximaNominatim - agora;
+  proximaNominatim = Math.max(agora, proximaNominatim) + NOMINATIM_INTERVALO_MS;
+  if (espera > 0) await new Promise((r) => setTimeout(r, espera));
+}
+
+async function buscarNominatim(
+  busca: Record<string, string>,
+): Promise<LatLngTuple | null> {
+  await aguardarVezNominatim();
   const params = new URLSearchParams({
     format: 'json',
     limit: '1',
+    'accept-language': 'pt-BR,pt;q=0.9',
+    ...busca,
+  });
+  // Com o cabeçalho Accept-Language o navegador bloqueia a resposta por CORS.
+  const nom = await fetch(
+    `https://nominatim.openstreetmap.org/search?${params}`,
+  ).catch(() => null);
+  if (!nom?.ok) return null;
+  const rows = (await nom.json()) as { lat: string; lon: string }[];
+  if (!rows.length) return null;
+  return [Number(rows[0].lat), Number(rows[0].lon)];
+}
+
+function coordenadasPorRua(info: ViaCepResponse) {
+  if (!info.logradouro) return null;
+  return buscarNominatim({
+    street: info.logradouro,
     city: info.localidade,
     state: info.uf,
     country: 'Brasil',
   });
-  if (info.logradouro) params.set('street', info.logradouro);
-
-  const nom = await fetch(
-    `https://nominatim.openstreetmap.org/search?${params}`,
-    { headers: { 'Accept-Language': 'pt-BR,pt;q=0.9' } },
-  );
-  const rows = (await nom.json()) as { lat: string; lon: string }[];
-  if (!rows.length) throw new Error(UI.enderecoNaoMapa);
-
-  return [Number(rows[0].lat), Number(rows[0].lon)];
 }
 
-/** CEP via ViaCEP (e-DNE Correios). API oficial exige contrato. */
+function coordenadasPorBairro(info: ViaCepResponse) {
+  if (!info.bairro) return null;
+  return buscarNominatim({
+    q: `${info.bairro}, ${info.localidade}, ${info.uf}, Brasil`,
+  });
+}
+
+function coordenadasPorCidade(info: ViaCepResponse) {
+  return buscarNominatim({
+    city: info.localidade,
+    state: info.uf,
+    country: 'Brasil',
+  });
+}
+
+/**
+ * CEP via ViaCEP (e-DNE Correios). API oficial exige contrato.
+ * A BrasilAPI fica atrás do Nominatim porque às vezes devolve o centro do
+ * município em vez da rua do CEP.
+ */
 export async function localizarCep(cepDigits: string): Promise<CepLocalizado> {
   const info = await buscarEnderecoViaCep(cepDigits);
   const rotulo = rotuloViaCep(info);
 
-  const porCep = await coordenadasPorCep(cepDigits);
-  if (porCep) return { latlng: porCep, rotulo };
-
-  const latlng = await coordenadasPorEndereco(info);
+  const latlng =
+    (await coordenadasPorRua(info)) ??
+    (await coordenadasPorBairro(info)) ??
+    (await coordenadasPorCep(cepDigits)) ??
+    (await coordenadasPorCidade(info));
+  if (!latlng) throw new Error(UI.enderecoNaoMapa);
   return { latlng, rotulo };
 }
 
