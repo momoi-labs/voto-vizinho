@@ -12,10 +12,10 @@ import type { LocalAnalisado } from '../../domain/election';
 import { fmt } from '../../lib/format';
 import { UI } from '../../lib/ui-pt';
 
-function pinHtml(fill: string, size = 1) {
+function pinHtml(fill: string, miolo: string, size = 1) {
   const w = Math.round(24 * size);
   const h = Math.round(32 * size);
-  return `<svg width="${w}" height="${h}" viewBox="0 0 24 32"><path d="M12 31s10-11.2 10-18.5C22 6.2 17.5 1.5 12 1.5S2 6.2 2 12.5C2 19.8 12 31 12 31z" fill="${fill}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.6" fill="#fff"/></svg>`;
+  return `<svg width="${w}" height="${h}" viewBox="0 0 24 32"><path d="M12 31s10-11.2 10-18.5C22 6.2 17.5 1.5 12 1.5S2 6.2 2 12.5C2 19.8 12 31 12 31z" fill="${fill}" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="12.5" r="4.6" fill="${miolo}"/></svg>`;
 }
 
 function icone(local: LocalAnalisado, sel: boolean, destaque: boolean) {
@@ -25,8 +25,8 @@ function icone(local: LocalAnalisado, sel: boolean, destaque: boolean) {
   const w = Math.round(24 * scale);
   const h = Math.round(32 * scale);
   return L.divIcon({
-    className: `vv-marker pin${lula ? ' lula' : ''}${sel ? ' sel' : ''}${destaque ? ' destaque' : ''}`,
-    html: pinHtml(fill, scale),
+    className: `vv-marker pin${lula ? ' lula' : ''}${sel ? ' sel' : ''}`,
+    html: pinHtml(fill, destaque ? '#fff' : '#000', scale),
     iconSize: [w, h],
     iconAnchor: [Math.round(w / 2), h],
   });
