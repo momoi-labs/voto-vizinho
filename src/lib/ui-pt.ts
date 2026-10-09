@@ -55,7 +55,6 @@ export const UI = {
   tseTurno: 'TSE \u00b7 1\u00ba turno 2026',
   tooltipVotos: (flavio: string, lula: string) =>
     `Fl\u00e1vio Bolsonaro ${flavio} \u00b7 Lula ${lula}`,
-  tooltipSemVoto: (n: string) => `Absten\u00e7\u00f5es + brancos + nulos: ${n}`,
 } as const;
 
 export const TEXTOS = {

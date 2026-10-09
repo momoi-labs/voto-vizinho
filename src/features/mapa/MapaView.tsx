@@ -149,7 +149,7 @@ export function MapaView({
             <br />
             {UI.tooltipVotos(fmt(l.flavio), fmt(l.lula))}
             <br />
-            {UI.tooltipSemVoto(fmt(l.semVoto))}
+            {UI.semVotoExp}: {fmt(l.semVoto)}
           </Tooltip>
         </Marker>
       ))}

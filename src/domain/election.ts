@@ -32,7 +32,8 @@ export type LocalAnalisado = LocalBruto & {
 export function analisarLocal(l: LocalBruto): LocalAnalisado {
   const dif = l.flavio - l.lula;
   const lulaVence = dif < 0;
-  const reserva = l.outros + l.brancos + l.nulos + l.abstencoes;
+  const semVoto = l.abstencoes + l.brancos + l.nulos;
+  const reserva = l.outros + semVoto;
   const virar = lulaVence ? 0 : Math.floor(dif / 2) + 1;
   const conquistar = lulaVence ? 0 : dif + 1;
   const pct = l.aptos > 0 ? dif / l.aptos : 0;
@@ -41,7 +42,7 @@ export function analisarLocal(l: LocalBruto): LocalAnalisado {
     dif,
     lulaVence,
     reserva,
-    semVoto: l.abstencoes + l.brancos + l.nulos,
+    semVoto,
     virar,
     conquistar,
     conquistaBasta: conquistar <= reserva,
